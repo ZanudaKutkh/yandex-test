@@ -3,13 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Проверка Яндекс Капчи</title>
-    <!-- Подключение скрипта капчи -->
-    <script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
+    <title>Имитация отправки данных с капчей</title>
+    <!-- Подключаем капчу расширенным методом -->
+    <script src="https://smartcaptcha.yandexcloud.net/captcha.js?render=onload&onload=onloadFunction" defer></script>
 </head>
 <body>
-    <h1>Тестирование Яндекс Капчи</h1>
-    <!-- Контейнер для капчи -->
-    <div id="captcha-container" class="smart-captcha" data-sitekey="ysc1_mL8q3l5fZLpvRc9CYMG8XP8Jf0sXRRCJlFLVZsQjb0c2981a"></div>
+    <h1>Проверка капчи без реальной отправки данных</h1>
+
+    <!-- Форма для имитации отправки сообщения -->
+    <form id="message-form">
+        <div id="captcha-container"></div> <!-- Контейнер для невидимой капчи -->
+
+        <!-- Поле для ввода сообщения -->
+        <label for="message">Введите сообщение:</label>
+        <textarea id="message" name="message" rows="4" cols="50"></textarea>
+
+        <!-- Кнопка для проверки капчи -->
+        <button type="button" id="submit-btn">Отправить</button>
+    </form>
+
+    <script>
+        const form = document.getElementById('message-form');
+        const submitBtn = document.getElementById('submit-btn');
+
+        // Функция, вызываемая при загрузке капчи
+        function onloadFunction() {
+            if (!window.smartCaptcha) {
+                return;
+            }
+
+            // Рендерим капчу в невидимом режиме
+            window.smartCaptcha.render('captcha-container', {
+                sitekey: 'ysc1_mL8q3l5fZLpvRc9CYMG8XP8Jf0sXRRCJlFLVZsQjb0c2981a',  // Замените на ваш sitekey
+                invisible: true,  // Невидимая капча
+                callback: onCaptchaSuccess // Функция, вызываемая при успешной проверке капчи
+            });
+        }
+
+        // Функция обратного вызова, которая срабатывает при успешной проверке капчи
+        function onCaptchaSuccess(token) {
+            // Имитация успешной валидации капчи
+            alert('Капча пройдена успешно! Токен: ' + token);
+        }
+
+        // Обработчик нажатия на кнопку "Отправить"
+        submitBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Останавливаем стандартное поведение формы
+
+            if (!window.smartCaptcha) {
+                return;
+            }
+
+            // Запускаем валидацию капчи
+            window.smartCaptcha.execute();
+        });
+    </script>
 </body>
 </html>
